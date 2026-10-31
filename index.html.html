@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>EA FC Kura</title>
+<style>
+:root{--bg:#070908;--panel:#101512;--p2:#161d19;--line:#1f2a24;--g:#2dff7a;--g2:#13c957;--tx:#e8f1ec;--mut:#7f8f87;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(900px 500px at 70% -10%,rgba(45,255,122,.12),transparent),repeating-linear-gradient(90deg,#0a0d0b 0 80px,#090c0a 80px 160px);background-color:var(--bg);color:var(--tx);font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;min-height:100vh}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer;border:0;background:none}button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.app{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}.ball{font-size:34px;filter:drop-shadow(0 0 10px var(--g))}
+h1{font-size:26px;letter-spacing:.14em;font-weight:900;font-style:italic}.brand p{color:var(--mut);font-size:13px}
+.tabs{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px}
+.tabs button{padding:10px 18px;border-radius:9px;font-weight:700;color:var(--mut);transition:.2s}
+.tabs .on{background:var(--g);color:#031109;box-shadow:0 0 18px rgba(45,255,122,.4)}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:20px}@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.stage{background:linear-gradient(160deg,var(--p2),var(--panel));border:1px solid var(--line);border-radius:20px;padding:26px;min-height:520px;display:flex;flex-direction:column;gap:22px}
+.col{display:flex;flex-direction:column;align-items:center;gap:20px;flex:1}
+.cta{width:100%;max-width:420px;padding:18px;border-radius:14px;font-size:20px;font-weight:900;letter-spacing:.1em;font-style:italic;color:#031109;background:linear-gradient(135deg,var(--g),var(--g2));box-shadow:0 0 28px rgba(45,255,122,.35);transition:transform .15s,box-shadow .2s}
+.cta:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 44px rgba(45,255,122,.6)}.cta:active{transform:scale(.98)}
+.hint{color:var(--mut);font-size:13px}
+.team{width:100%;max-width:420px;min-height:300px;border-radius:18px;border:1px solid var(--line);background:radial-gradient(circle at 50% 0,rgba(45,255,122,.14),transparent 70%),var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center}
+.team h2{font-size:30px;line-height:1.1}.tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.tags span{background:var(--p2);border:1px solid var(--line);padding:5px 12px;border-radius:99px;font-size:13px;color:var(--mut)}
+.team.empty{border-style:dashed}.ph{font-size:80px;font-weight:900;color:var(--line)}.team.empty p{color:var(--mut)}
+.team.spin{border-color:var(--g);box-shadow:0 0 30px rgba(45,255,122,.3)}.team.spin .crest,.team.spin h2{animation:blur .12s infinite alternate}
+.team.done{animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes blur{to{filter:blur(2px);transform:translateY(-3px)}}@keyframes pop{from{transform:scale(.8);opacity:.3}}
+.crest{border-radius:50%;display:grid;place-items:center;font-weight:900;border:2px solid rgba(255,255,255,.18)}
+.stars{letter-spacing:2px;font-size:20px}.star{color:#2a3530}.star.f{color:var(--g)}
+.star.h{background:linear-gradient(90deg,var(--g) 50%,#2a3530 50%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.players{width:100%;max-width:420px;display:flex;flex-direction:column;gap:8px}
+.prow{display:flex;gap:8px;align-items:center}.num{width:28px;height:28px;border-radius:50%;background:var(--g);color:#031109;font-weight:900;display:grid;place-items:center;font-size:13px;flex:none}
+.prow input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}.prow input:focus{border-color:var(--g)}
+.icon{width:36px;height:36px;border-radius:10px;background:var(--bg);border:1px solid var(--line);color:var(--mut)}.icon:hover:not(:disabled){color:#ff5a6a;border-color:#ff5a6a}
+.ghost{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;transition:.2s}.ghost:hover:not(:disabled){border-color:var(--g);color:var(--g)}.ghost.sm{padding:6px 10px;font-size:13px}
+.cards{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.pcard{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;animation:flip .6s both}
+.pcard:hover{border-color:var(--g)}.pcard h3{font-size:17px}.pname{font-weight:800;color:var(--g);font-size:14px}.meta{color:var(--mut);font-size:13px}
+@keyframes flip{from{opacity:0;transform:perspective(600px) rotateY(90deg)}to{opacity:1;transform:none}}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:auto}
+.side{display:flex;flex-direction:column;gap:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.ph2{display:flex;justify-content:space-between;align-items:center}h3.t{font-size:16px}
+.link{color:var(--g);font-size:13px;font-weight:600;margin-left:8px}
+.chips{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
+.chip{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--mut);text-align:left;transition:.15s}
+.chip.on{border-color:var(--g);color:var(--tx);background:rgba(45,255,122,.08)}.chip b{font-size:12px;background:var(--p2);padding:2px 8px;border-radius:99px}.chip.on b{background:var(--g);color:#031109}
+.switch{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}.switch input{accent-color:var(--g);width:18px;height:18px;margin-top:1px;flex:none}
+.sel{display:flex;justify-content:space-between;align-items:center;font-size:14px;gap:10px}
+select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+.hist{list-style:none;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.hist li{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:8px 10px;background:var(--bg);border-radius:8px}
+.hw{color:var(--g);font-weight:700}.ht{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hist .stars{font-size:11px;letter-spacing:0}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);background:var(--g);color:#031109;font-weight:700;padding:12px 20px;border-radius:12px;opacity:0;pointer-events:none;transition:.3s;z-index:9;max-width:90vw}.toast.show{opacity:1;transform:translate(-50%,0)}
+.cards.dualc{grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.pair{display:flex;gap:8px;width:100%}
+.opt{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border:1px solid var(--line);border-radius:12px;background:var(--p2);transition:.2s;text-align:center}
+.opt:hover{border-color:var(--g);transform:translateY(-3px);box-shadow:0 0 18px rgba(45,255,122,.25)}
+.opt b{font-size:14px}.opt small{color:var(--mut);font-size:11px}.opt .stars{font-size:14px;letter-spacing:1px}
+.matches{width:100%;display:flex;flex-direction:column;gap:10px}
+.match{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px}
+.match .s1{display:flex;flex-direction:column;gap:2px}.match .s1.r{text-align:right}.match small{color:var(--g);font-size:12px}.match span{color:var(--mut);font-size:13px}
+.vs{font-weight:900;font-style:italic;color:var(--mut)}
+.match.bye{display:flex;justify-content:space-between}.match.bye em{color:var(--mut)}
+@media(max-width:520px){.stage{padding:16px}.team h2{font-size:24px}.cta{font-size:17px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="ball">⚽</span><div><h1>EA FC KURA</h1><p>Takımını şansa bırak</p></div></div>
+    <nav class="tabs"><button id="tSolo" onclick="setMode('solo')">Tek Kura</button><button id="tFr" onclick="setMode('friends')">Arkadaşlarla</button></nav>
+  </header>
+  <main class="layout">
+    <section class="stage"><div id="stage" class="col"></div>
+      <div class="actions"><button class="ghost" onclick="share()">📋 Kopyala / Paylaş</button><button class="ghost" onclick="resetAll()">⟲ Filtreleri sıfırla</button></div>
+    </section>
+    <aside class="side" id="side"></aside>
+  </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ============ TAKIM VERİSİ ============
+   Takım eklemek/çıkarmak için ilgili ligin listesini düzenle.
+   Format: "Takım Adı:güç" veya "Takım Adı:güç:ülke" (virgülle ayır). Güç 0.5 - 5 arası. */
+const LEAGUES = [
+["pl","Premier League","İngiltere","🇬🇧","Arsenal:4.5,Aston Villa:4,Bournemouth:3.5,Brentford:3.5,Brighton:3.5,Burnley:3,Chelsea:4.5,Crystal Palace:3.5,Everton:3.5,Fulham:3.5,Leeds United:3.5,Liverpool:4.5,Manchester City:5,Manchester United:4.5,Newcastle United:4,Nottingham Forest:3.5,Sunderland:3,Tottenham Hotspur:4,West Ham United:3.5,Wolverhampton Wanderers:3.5"],
+["champ","Championship","İngiltere","🇬🇧","Birmingham City:2.5,Blackburn Rovers:2.5,Bristol City:2.5,Charlton Athletic:2.5,Coventry City:3,Derby County:2.5,Hull City:2.5,Ipswich Town:3,Leicester City:3,Middlesbrough:3,Millwall:2.5,Norwich City:3,Oxford United:2.5,Portsmouth:2.5,Preston North End:2.5,Queens Park Rangers:2.5,Sheffield United:3,Sheffield Wednesday:2.5,Southampton:3,Stoke City:2.5,Swansea City:2.5,Watford:3,West Bromwich Albion:3,Wrexham:2.5"],
+["laliga","La Liga","İspanya","🇪🇸","Alavés:3,Athletic Club:4,Atlético Madrid:4.5,Barcelona:5,Celta Vigo:3.5,Elche:3,Espanyol:3,Getafe:3,Girona:3.5,Levante:3,Mallorca:3,Osasuna:3,Rayo Vallecano:3,Real Betis:3.5,Real Madrid:5,Real Oviedo:3,Real Sociedad:3.5,Sevilla:3.5,Valencia:3.5,Villarreal:3.5"],
+["bl","Bundesliga","Almanya","🇩🇪","Augsburg:3,Union Berlin:3,Bayern Munich:5,Bayer Leverkusen:4.5,Borussia Dortmund:4.5,Borussia Mönchengladbach:3.5,Eintracht Frankfurt:4,FC Köln:3,SC Freiburg:3.5,Hamburger SV:3,Heidenheim:3,Hoffenheim:3.5,Mainz 05:3,RB Leipzig:4,FC St. Pauli:3,VfB Stuttgart:4,Werder Bremen:3.5,VfL Wolfsburg:3.5"],
+["seriea","Serie A","İtalya","🇮🇹","Atalanta:4,Bologna:3.5,Cagliari:3,Como:3.5,Cremonese:3,Fiorentina:3.5,Genoa:3,Hellas Verona:3,Inter:4.5,Juventus:4.5,Lazio:4,Lecce:3,Milan:4.5,Napoli:4.5,Parma:3,Pisa:3,Roma:4,Sassuolo:3,Torino:3,Udinese:3"],
+["ligue1","Ligue 1","Fransa","🇫🇷","Angers:2.5,Auxerre:3,Brest:3,Le Havre:2.5,Lens:3.5,Lille:3.5,Lorient:3,Lyon:3.5,Marseille:4,Metz:2.5,Monaco:4,Nantes:3,Nice:3.5,Paris FC:3,Paris Saint-Germain:5,Rennes:3.5,Strasbourg:3.5,Toulouse:3"],
+["superlig","Süper Lig","Türkiye","🇹🇷","Alanyaspor:3,Antalyaspor:2.5,Başakşehir:3,Beşiktaş:4,Eyüpspor:3,Fenerbahçe:4,Galatasaray:4.5,Gaziantep FK:2.5,Gençlerbirliği:2.5,Göztepe:3,Kasımpaşa:2.5,Kayserispor:2.5,Kocaelispor:2.5,Konyaspor:3,Çaykur Rizespor:3,Samsunspor:3,Trabzonspor:3.5,Fatih Karagümrük:3"],
+["ere","Eredivisie","Hollanda","🇳🇱","Ajax:4,AZ:3.5,Excelsior:2.5,Feyenoord:4,Fortuna Sittard:2.5,Go Ahead Eagles:3,FC Groningen:3,SC Heerenveen:3,Heracles Almelo:2.5,NAC Breda:2.5,NEC Nijmegen:3,PEC Zwolle:2.5,PSV:4.5,Sparta Rotterdam:3,Telstar:2.5,FC Twente:3.5,FC Utrecht:3.5,FC Volendam:2.5"],
+["pt","Liga Portugal","Portekiz","🇵🇹","Alverca:2.5,Arouca:3,AVS:2.5,Benfica:4.5,SC Braga:4,Casa Pia:3,Estoril Praia:3,Estrela da Amadora:2.5,Famalicão:3,Gil Vicente:3,Vitória SC:3.5,Moreirense:3,Nacional:3,FC Porto:4.5,Rio Ave:3,Santa Clara:3,Sporting CP:4.5,Tondela:2.5"],
+["be","Pro League","Belçika","🇧🇪","Anderlecht:3.5,Royal Antwerp:3.5,Cercle Brugge:3,Charleroi:3,Club Brugge:4,Dender:2.5,Genk:3.5,Gent:3.5,Mechelen:3,OH Leuven:3,Sint-Truiden:3,Standard Liège:3,Union Saint-Gilloise:3.5,Westerlo:3,Zulte Waregem:2.5,RAAL La Louvière:2.5"],
+["sco","Scottish Premiership","İskoçya","🇬🇧","Aberdeen:3,Celtic:4,Dundee:2.5,Dundee United:2.5,Falkirk:2.5,Hearts:3,Hibernian:3,Kilmarnock:2.5,Livingston:2.5,Motherwell:2.5,Rangers:3.5,St Mirren:2.5"],
+["other","Diğer Avrupa","Avrupa","🇪🇺","Olympiacos:3.5:Yunanistan,Panathinaikos:3:Yunanistan,PAOK:3:Yunanistan,AEK Athens:3:Yunanistan,Red Bull Salzburg:3.5:Avusturya,Sturm Graz:3:Avusturya,Young Boys:3:İsviçre,FC Basel:3:İsviçre,FC Copenhagen:3.5:Danimarka,Dinamo Zagreb:3.5:Hırvatistan,Crvena Zvezda:3.5:Sırbistan,Sparta Prague:3.5:Çekya,Slavia Prague:3.5:Çekya,Shakhtar Donetsk:3.5:Ukrayna,Ferencváros:3:Macaristan"]
+];
+
+/* ============ KOD ============ */
+const T=[];LEAGUES.forEach(l=>l[4].split(",").forEach(s=>{const p=s.split(":");T.push({id:l[0]+"-"+p[0],n:p[0],s:+p[1],c:p[2]||l[2],l:l[0],ln:l[1],f:l[3]})}));
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rnd=a=>a[Math.random()*a.length|0];
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const DEF={sel:LEAGUES.map(l=>l[0]),noRep:true,uniq:true,min:0};
+let S={...DEF,players:["Oyuncu 1","Oyuncu 2"],hist:[]};
+try{Object.assign(S,JSON.parse(localStorage.getItem("fckura")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("fckura",JSON.stringify(S))}catch(e){}};
+let mode="solo",used=[],shown=null,spin=false,assign=[],opts=[],matches=[],duos=[],round=0,tt;
+
+const pool=()=>T.filter(t=>S.sel.includes(t.l)&&t.s>=S.min);
+const flash=m=>{const e=$("#toast");e.textContent=m;e.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("show"),2600)};
+const stars=v=>'<span class="stars">'+[1,2,3,4,5].map(i=>`<span class="star ${v>=i?"f":v>=i-.5?"h":""}">★</span>`).join("")+"</span>";
+const crest=(t,z)=>{const h=[...t.n].reduce((a,c)=>(a*31+c.charCodeAt(0))%360,7);const ini=t.n.split(" ").slice(0,2).map(w=>w[0]).join("").toUpperCase();
+  return `<div class="crest" style="width:${z}px;height:${z}px;font-size:${z*.36}px;background:linear-gradient(135deg,hsl(${h} 60% 38%),hsl(${(h+40)%360} 70% 18%))">${esc(ini)}</div>`};
+const log=a=>{S.hist=[...a.map(x=>({w:x.w,n:x.t.n,s:x.t.s})),...S.hist].slice(0,30);save();renderSide()};
+const names=()=>S.players.map((p,i)=>p.trim()||"Oyuncu "+(i+1));
+
+function setMode(m){mode=m;renderStage()}
+function teamHTML(){
+  if(!shown)return '<div class="team empty"><div class="ph">?</div><p>Kura için butona bas</p></div>';
+  return `<div class="team ${spin?"spin":"done"}">${crest(shown,132)}<h2>${esc(shown.n)}</h2><div class="tags"><span>${shown.f} ${esc(shown.ln)}</span><span>${esc(shown.c)}</span></div>${stars(shown.s)}</div>`}
+function hintText(){const p=pool();return p.length+" takım havuzda"+(S.noRep?" · "+p.filter(t=>!used.includes(t.id)).length+" tanesi henüz çıkmadı":"")}
+
+function draw(){
+  if(spin)return;const p=pool();if(!p.length)return flash("Havuz boş: en az bir lig seç");
+  let av=S.noRep?p.filter(t=>!used.includes(t.id)):p;
+  if(!av.length){av=p;used=[];flash("Havuz bitti, baştan başlıyor")}
+  const fin=rnd(av);spin=true;let i=0;$("#go").disabled=true;$("#go").textContent="KURA ÇEKİLİYOR…";
+  const tick=()=>{
+    if(i++<22){shown=rnd(p);$("#tm").innerHTML=teamHTML();setTimeout(tick,45+i*i*.45)}
+    else{shown=fin;spin=false;if(S.noRep)used.push(fin.id);log([{w:"Tek kura",t:fin}]);renderStage()}};
+  tick()}
+
+function addPlayer(){if(S.players.length<10){S.players.push("Oyuncu "+(S.players.length+1));save();renderStage()}}
+function delPlayer(i){if(S.players.length>2){S.players.splice(i,1);assign=[];opts=[];matches=[];duos=[];save();renderStage()}}
+function distribute(){
+  const p=pool(),n=S.players.length,k=S.dual?2:1;matches=[];opts=[];duos=[];
+  if(!p.length)return flash("Havuz boş: en az bir lig seç");
+  if(S.dual&&p.length<2)return flash("Çift seçenek için en az 2 takım gerekli");
+  if(S.uniq&&p.length<n*k)return flash("Havuzda "+p.length+" takım var, "+(n*k)+" takım gerekiyor");
+  if(S.dual){
+    const s=shuf(p);
+    opts=S.players.map((_,i)=>{if(S.uniq)return[s[i*2],s[i*2+1]];const a=rnd(p);return[a,rnd(p.filter(t=>t.id!==a.id))]});
+    assign=S.players.map(()=>null);round++;renderStage();return}
+  assign=S.uniq?shuf(p).slice(0,n):S.players.map(()=>rnd(p));round++;
+  const nm=names();log(assign.map((t,i)=>({w:nm[i],t})));renderStage()}
+function reroll(i){
+  const taken=(S.dual?opts:assign.map(t=>[t])).filter((_,j)=>j!==i).flat().filter(Boolean).map(t=>t.id);
+  const cur=(S.dual?opts[i]:[assign[i]]).map(t=>t.id);
+  const av=pool().filter(t=>!cur.includes(t.id)&&(!S.uniq||!taken.includes(t.id)));
+  if(av.length<(S.dual?2:1))return flash("Başka uygun takım kalmadı");
+  if(S.dual){const s=shuf(av);opts[i]=[s[0],s[1]];assign[i]=null}
+  else{assign[i]=rnd(av);log([{w:names()[i],t:assign[i]}])}
+  round++;renderStage()}
+function pickOpt(i,k){assign[i]=opts[i][k];log([{w:names()[i],t:assign[i]}]);renderStage()}
+function pairUp(){
+  const n=S.players.length,idx=shuf([...Array(n).keys()]);matches=[];
+  for(let i=0;i+1<n;i+=2)matches.push({h:idx[i],a:idx[i+1]});
+  if(n%2)matches.push({bye:idx[n-1]});
+  renderStage()}
+function cardsHTML(){const nm=names();return assign.map((t,i)=>{
+  const d=`animation-delay:${i*90}ms`;
+  if(t)return `<article class="pcard" style="${d}"><div class="pname">${esc(nm[i])}</div>${crest(t,72)}<h3>${esc(t.n)}</h3><p class="meta">${t.f} ${esc(t.ln)}</p>${stars(t.s)}<button class="ghost sm" onclick="reroll(${i})">↻ Yeniden çek</button></article>`;
+  return `<article class="pcard" style="${d}"><div class="pname">${esc(nm[i])}, birini seç</div><div class="pair">${opts[i].map((o,k)=>`<button class="opt" onclick="pickOpt(${i},${k})">${crest(o,56)}<b>${esc(o.n)}</b><small>${o.f} ${esc(o.ln)}</small>${stars(o.s)}</button>`).join("")}</div><button class="ghost sm" onclick="reroll(${i})">↻ Başka ikili</button></article>`}).join("")}
+function matchHTML(){if(!matches.length)return"";const nm=names();const tn=i=>assign[i]?esc(assign[i].n):"takım seçmedi";
+  return `<div class="matches"><h3 class="t">Maç eşleşmeleri</h3>${matches.map(m=>m.bye!=null?`<div class="match bye"><b>${esc(nm[m.bye])}</b><em>bu tur dinleniyor</em></div>`:`<div class="match"><div class="s1"><small>Ev sahibi</small><b>${esc(nm[m.h])}</b><span>${tn(m.h)}</span></div><div class="vs">VS</div><div class="s1 r"><small>Deplasman</small><b>${esc(nm[m.a])}</b><span>${tn(m.a)}</span></div></div>`).join("")}</div>`}
+
+function pairDuos(){
+  const n=S.players.length,p=pool(),g=n===2?1:2,idx=shuf([...Array(n).keys()]),groups=[];
+  if(!p.length)return flash("Havuz boş: en az bir lig seç");
+  for(let i=0;i<n;i+=g)groups.push(idx.slice(i,i+g));
+  if(S.uniq&&p.length<groups.length)return flash("Havuzda "+p.length+" takım var, "+groups.length+" takım gerekiyor");
+  const s=shuf(p);
+  duos=groups.map((q,i)=>({p:q,t:S.uniq?s[i]:rnd(p)}));
+  const o=shuf(duos.map((_,i)=>i));matches=[];
+  for(let i=0;i+1<o.length;i+=2)matches.push({h:o[i],a:o[i+1]});
+  if(o.length%2)matches.push({bye:o[o.length-1]});
+  assign=[];opts=[];round++;
+  const nm=names();log(duos.map(d=>({w:d.p.map(i=>nm[i]).join(" & "),t:d.t})));
+  renderStage()}
+function duoHTML(){if(!matches.length)return"";const nm=names();
+  const side=(d,l,r)=>`<div class="s1${r?" r":""}"><small>${l}</small><b>${esc(d.p.map(i=>nm[i]).join(" & "))}</b><span>${esc(d.t.n)} · ${d.t.s}★</span></div>`;
+  return `<div class="matches"><h3 class="t">Maç eşleşmeleri</h3>${matches.map(m=>m.bye!=null?`<div class="match bye"><b>${esc(duos[m.bye].p.map(i=>nm[i]).join(" & "))} (${esc(duos[m.bye].t.n)})</b><em>bu tur dinleniyor</em></div>`:`<div class="match">${side(duos[m.h],"Ev sahibi")}<div class="vs">VS</div>${side(duos[m.a],"Deplasman",1)}</div>`).join("")}</div>`}
+function renderStage(){
+  $("#tSolo").className=mode==="solo"?"on":"";$("#tFr").className=mode==="friends"?"on":"";
+  if(mode==="solo"){
+    $("#stage").innerHTML=`<div id="tm">${teamHTML()}</div><button class="cta" id="go" onclick="draw()">${shown?"TEKRAR ÇEK":"TAKIMINI SEÇ"}</button><p class="hint" id="hint">${hintText()}</p>`;
+  }else{
+    $("#stage").innerHTML=`<div class="players">${S.players.map((p,i)=>`<div class="prow"><span class="num">${i+1}</span><input value="${esc(p)}" maxlength="18" aria-label="Oyuncu ${i+1} adı" oninput="S.players[${i}]=this.value;save()"><button class="icon" title="Oyuncuyu sil" onclick="delPlayer(${i})" ${S.players.length<=2?"disabled":""}>✕</button></div>`).join("")}
+      <button class="ghost" onclick="addPlayer()" ${S.players.length>=10?"disabled":""}>+ Oyuncu ekle (${S.players.length}/10)</button></div>
+      <button class="cta" onclick="distribute()">${assign.length?"TÜMÜNÜ YENİDEN DAĞIT":"HERKESE TAKIM DAĞIT"}</button>
+      <button class="ghost" onclick="pairDuos()">🎲 Eşleşme kurası (ikili ekipler, ev sahibi / deplasman)</button>
+      <div class="cards ${S.dual?"dualc":""}">${cardsHTML()}</div>${duoHTML()}`;
+  }}
+
+function renderSide(){
+  const cnt={};T.filter(t=>t.s>=S.min).forEach(t=>cnt[t.l]=(cnt[t.l]||0)+1);
+  $("#side").innerHTML=`<div class="panel"><div class="ph2"><h3 class="t">Ligler</h3><span><button class="link" onclick="setAll(true)">Tümü</button><button class="link" onclick="setAll(false)">Hiçbiri</button></span></div>
+    <div class="chips">${LEAGUES.map(l=>`<button class="chip ${S.sel.includes(l[0])?"on":""}" onclick="togLeague('${l[0]}')"><span>${l[3]} ${esc(l[1])}</span><b>${cnt[l[0]]||0}</b></button>`).join("")}</div></div>
+    <div class="panel"><h3 class="t">Ayarlar</h3>
+    <label class="switch"><input type="checkbox" ${S.noRep?"checked":""} onchange="S.noRep=this.checked;used=[];save();upd()"><span>Tek kurada çıkan takım tekrar çıkmasın</span></label>
+    <label class="switch"><input type="checkbox" ${S.uniq?"checked":""} onchange="S.uniq=this.checked;save()"><span>Arkadaşlarda aynı takım iki kişiye verilmesin</span></label>
+    <label class="switch"><input type="checkbox" ${S.dual?"checked":""} onchange="S.dual=this.checked;assign=[];opts=[];matches=[];duos=[];save();if(mode==='friends')renderStage()"><span>Çift seçenek: herkese 2 takım çıksın, kendisi seçsin</span></label>
+    <label class="sel">Minimum güç<select onchange="S.min=+this.value;save();renderSide();upd()"><option value="0">Hepsi</option>${[2.5,3,3.5,4,4.5].map(v=>`<option value="${v}" ${S.min===v?"selected":""}>${v}★ ve üzeri</option>`).join("")}</select></label></div>
+    <div class="panel"><div class="ph2"><h3 class="t">Geçmiş</h3>${S.hist.length?'<button class="link" onclick="clearHist()">Temizle</button>':""}</div>
+    ${S.hist.length?`<ul class="hist">${S.hist.slice(0,12).map(h=>`<li><span class="hw">${esc(h.w)}</span><span class="ht">${esc(h.n)}</span>${stars(h.s)}</li>`).join("")}</ul>`:'<p class="hint">Henüz kura çekilmedi.</p>'}</div>`}
+const upd=()=>{const h=$("#hint");if(h)h.textContent=hintText()};
+function togLeague(id){S.sel=S.sel.includes(id)?S.sel.filter(x=>x!==id):[...S.sel,id];save();renderSide();upd()}
+function setAll(v){S.sel=v?LEAGUES.map(l=>l[0]):[];save();renderSide();upd()}
+function clearHist(){S.hist=[];used=[];save();renderSide();upd()}
+function resetAll(){S.sel=[...DEF.sel];S.noRep=DEF.noRep;S.uniq=DEF.uniq;S.min=DEF.min;used=[];save();renderSide();upd();flash("Filtreler sıfırlandı")}
+
+async function share(){
+  const nm=names();let lines=mode==="solo"&&shown?[`${shown.n} (${shown.ln}) ${shown.s}★`]:assign.map((t,i)=>t?`${nm[i]}: ${t.n} (${t.ln}) ${t.s}★`:`${nm[i]}: seçim bekliyor`);
+  if(mode!=="solo"&&matches.length){const dn=d=>d.p.map(i=>nm[i]).join(" & ")+" ("+d.t.n+")";lines=["Maçlar:",...matches.map(m=>m.bye!=null?`${dn(duos[m.bye])}: bu tur dinleniyor`:`${dn(duos[m.h])} (ev sahibi) - ${dn(duos[m.a])} (deplasman)`)]}
+  if(!lines.length)return flash("Önce bir kura çek");
+  const text="⚽ EA FC Kura\n"+lines.join("\n");
+  try{if(navigator.share&&/Mobi|Android/i.test(navigator.userAgent)){await navigator.share({text});return}}catch(e){if(e&&e.name==="AbortError")return}
+  try{await navigator.clipboard.writeText(text);flash("Kopyalandı!");return}catch(e){}
+  const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy");flash("Kopyalandı!")}catch(e){flash("Kopyalanamadı")}ta.remove()}
+
+renderStage();renderSide();
+</script>
+</body>
+</html>
